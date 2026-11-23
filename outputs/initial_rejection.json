@@ -1,0 +1,18 @@
+{
+  "rejection_ref": "initial-rejection-run-20261120T174800Z-bf10d1",
+  "run_id": "run-20261120T174800Z-bf10d1",
+  "checked_at_utc": "2026-11-20T17:48:00Z",
+  "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243",
+  "table": "training.to6_challenge3_inputs.returns_initial",
+  "decision": "REJECTED",
+  "rule_results": {
+    "completeness_null_required_rows": 1,
+    "uniqueness_duplicate_return_ids": 1,
+    "validity_negative_amount_rows": 0,
+    "validity_year_out_of_range_rows": 0,
+    "total_rows": 13,
+    "distinct_return_ids": 12
+  },
+  "affected_records_table": "training.to6_c3_915f8c75478a.initial_rejected_records",
+  "next_action": "Do not repair or use the initial batch; assess returns_corrected with the same rules."
+}

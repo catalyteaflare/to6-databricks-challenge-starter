@@ -1,0 +1,81 @@
+{
+  "run_a": {
+    "run_id": "run-20261120T161304Z-bb63cf",
+    "run_ts_utc": "2026-11-20T16:13:04Z",
+    "finished_ts_utc": "2026-11-20T16:13:49Z",
+    "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243"
+  },
+  "run_b": {
+    "run_id": "run-20261120T161446Z-03e856",
+    "run_ts_utc": "2026-11-20T16:14:46Z",
+    "finished_ts_utc": "2026-11-20T16:15:30Z",
+    "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243"
+  },
+  "snapshot_files": [
+    "outputs/run_snapshots/run-20261120T161304Z-bb63cf.json",
+    "outputs/run_snapshots/run-20261120T161446Z-03e856.json"
+  ],
+  "tables": {
+    "training.to6_c3_915f8c75478a.return_features": {
+      "rows_run_a": 12,
+      "rows_run_b": 12,
+      "no_duplicate_ids_run_a": true,
+      "no_duplicate_ids_run_b": true,
+      "identical_ids": true,
+      "identical_ids_and_values": true,
+      "differences": [],
+      "last_write_run_b": {
+        "version": 1,
+        "timestamp": "2026-11-20 16:15:03.654000",
+        "operation": "CREATE OR REPLACE TABLE AS SELECT",
+        "mode": null
+      }
+    },
+    "training.to6_c3_915f8c75478a.features_train": {
+      "rows_run_a": 4,
+      "rows_run_b": 4,
+      "no_duplicate_ids_run_a": true,
+      "no_duplicate_ids_run_b": true,
+      "identical_ids": true,
+      "identical_ids_and_values": true,
+      "differences": [],
+      "last_write_run_b": {
+        "version": 1,
+        "timestamp": "2026-11-20 16:15:20.041000",
+        "operation": "CREATE OR REPLACE TABLE AS SELECT",
+        "mode": null
+      }
+    },
+    "training.to6_c3_915f8c75478a.features_validation": {
+      "rows_run_a": 4,
+      "rows_run_b": 4,
+      "no_duplicate_ids_run_a": true,
+      "no_duplicate_ids_run_b": true,
+      "identical_ids": true,
+      "identical_ids_and_values": true,
+      "differences": [],
+      "last_write_run_b": {
+        "version": 1,
+        "timestamp": "2026-11-20 16:15:21.748000",
+        "operation": "CREATE OR REPLACE TABLE AS SELECT",
+        "mode": null
+      }
+    },
+    "training.to6_c3_915f8c75478a.features_test": {
+      "rows_run_a": 4,
+      "rows_run_b": 4,
+      "no_duplicate_ids_run_a": true,
+      "no_duplicate_ids_run_b": true,
+      "identical_ids": true,
+      "identical_ids_and_values": true,
+      "differences": [],
+      "last_write_run_b": {
+        "version": 1,
+        "timestamp": "2026-11-20 16:15:23.420000",
+        "operation": "CREATE OR REPLACE TABLE AS SELECT",
+        "mode": null
+      }
+    }
+  },
+  "all_identical": true
+}

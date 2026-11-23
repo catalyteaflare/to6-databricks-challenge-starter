@@ -1,0 +1,30 @@
+{
+  "run_id": "run-20261120T174800Z-bf10d1",
+  "table": "training.to6_c3_915f8c75478a.return_features",
+  "columns": [
+    "return_id",
+    "tax_year",
+    "deduction_to_income"
+  ],
+  "rows": 12,
+  "nonzero_check": {
+    "return_id": "R04",
+    "source_table": "training.to6_challenge3_inputs.parsed_source",
+    "deduction": 59,
+    "income": 400,
+    "expected": 0.1475,
+    "saved": 0.1475
+  },
+  "zero_income_check": [
+    {
+      "return_id": "R03",
+      "tax_year": 2022,
+      "deduction_to_income": null
+    },
+    {
+      "return_id": "R09",
+      "tax_year": 2024,
+      "deduction_to_income": null
+    }
+  ]
+}

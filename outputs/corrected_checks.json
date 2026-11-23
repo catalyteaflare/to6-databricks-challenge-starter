@@ -1,0 +1,14 @@
+{
+  "run_id": "run-20261120T174800Z-bf10d1",
+  "checked_at_utc": "2026-11-20T17:48:00Z",
+  "table": "training.to6_challenge3_inputs.returns_corrected",
+  "decision": "ACCEPTED",
+  "rule_results": {
+    "completeness_null_required_rows": 0,
+    "uniqueness_duplicate_return_ids": 0,
+    "validity_negative_amount_rows": 0,
+    "validity_year_out_of_range_rows": 0,
+    "total_rows": 12,
+    "distinct_return_ids": 12
+  }
+}
