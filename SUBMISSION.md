@@ -46,6 +46,21 @@ set to 0 and `R01` was not silently deduplicated.
 **Nonzero expected value:** for `R04`, Python computed the expected ratio from the `parsed_source` row: 59 / 400 = 0.1475. The value saved in
 `return_features` is 0.1475. A separate SQL check after the runs joined `return_features` to `parsed_source` and found 0 mismatches across all 12 returns.
 
+**Hand-calculated checks** (`outputs/hand_calculated_checks.csv` / `.json`): the expected ratios were worked out by hand from the source amounts and
+written into the notebook as literal figures. They are compared to the saved `return_features` values within 5e-7, because the hand figures are rounded to 6 dp:
+
+| return_id | income | deduction | hand-calculated | saved | match |
+| --- | --- | --- | --- | --- | --- |
+| R01 | 100 | 20 | 0.2 | 0.2 | yes |
+| R04 | 400 | 59 | 0.1475 | 0.1475 | yes |
+| R06 | 600 | 85 | 0.141667 (17/120) | 0.14166666666666666 | yes |
+| R10 | 1000 | 137 | 0.137 | 0.137 | yes |
+| R11 | 1100 | 150 | 0.136364 (3/22) | 0.13636363636363635 | yes |
+| R03 | 0 | 46 | NULL | NULL | yes |
+| R09 | 0 | 124 | NULL | NULL | yes |
+
+The notebook also asserts that the source amounts still equal the hand-calculation inputs.
+
 **Saved-table readback** (`outputs/feature_readback_checks.json`): the columns are exactly the three contract columns. There are 12 rows and 12
 distinct IDs, and the IDs and years match `returns_corrected` exactly. The zero-income returns `R03` (2022) and `R09` (2024) are present with a
 NULL ratio, and they are the only rows with a NULL ratio.
@@ -57,12 +72,20 @@ https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243
 
 | Run | run_id | Started (UTC) | Finished (UTC) | Snapshot |
 | --- | --- | --- | --- | --- |
-| 1 | run-20261120T161304Z-bb63cf | 2026-11-20 16:13:04 | 2026-11-20 16:13:49 | `outputs/run_snapshots/run-20261120T161304Z-bb63cf.json` |
-| 2 | run-20261120T161446Z-03e856 | 2026-11-20 16:14:46 | 2026-11-20 16:15:30 | `outputs/run_snapshots/run-20261120T161446Z-03e856.json` |
+| 1 | run-20261123T175615Z-138110 | 2026-11-23 17:56:15 | 2026-11-23 17:57:15 | `outputs/run_snapshots/run-20261123T175615Z-138110.json` |
+| 2 | run-20261123T175819Z-e400cf | 2026-11-23 17:58:19 | 2026-11-23 17:59:14 | `outputs/run_snapshots/run-20261123T175819Z-e400cf.json` |
+
+These are the final two complete runs, made after the hand-calculated checks and results file were added. Earlier complete runs on 2026-11-20
+(`run-20261120T161304Z-bb63cf`, `run-20261120T161446Z-03e856`) are kept in `outputs/run_snapshots/` as well, and they hold the same IDs and values.
 
 Each snapshot holds every `(return_id, tax_year, deduction_to_income)` row of `return_features` and the three year tables, plus each table's
 latest Delta write. `outputs/run_comparison.json` compares the two snapshots row by row. In all four tables the IDs and values are identical,
 there are 0 differences and no duplicate IDs (12 / 4 / 4 / 4 rows). The result is `all_identical: true`.
+`outputs/run_comparison.csv` shows the same comparison side by side: 24 rows (one per table and return ID), with each run's `tax_year` and ratio,
+and `identical = True` on every row.
+
+**Results file:** `outputs/results.json` gathers the final run's inputs, the initial rejection, output row counts, the ratio definition, and the
+readback, hand-calculated and repeat-run results in one place.
 
 * **Year assignment:** the notebook asserts that each year table holds only its assigned `tax_year`. After the runs, a separate SQL count found
   4 of 4 rows on the assigned year in each table.
@@ -78,16 +101,16 @@ Final exports in `outputs/`:
 * `initial_rejected_records.csv`, `initial_rejection.json`: the affected records, reasons and rejection reference.
 * `corrected_checks.json`: the replacement batch's rule results.
 * `feature_readback_checks.json`: the nonzero expected value and the zero-income readback.
-* `run_snapshots/*.json` (2 files) and `run_comparison.json`: the two-run IDs-and-values evidence.
+* `hand_calculated_checks.csv`, `hand_calculated_checks.json`: hand-calculated expected values compared to saved values for 7 returns.
+* `run_snapshots/*.json` (4 files), `run_comparison.json` and `run_comparison.csv`: the repeat-run IDs-and-values evidence.
+* `results.json`: a summary of all checks and their outcomes.
 
 Practice file, not part of the task: `outputs/connection-practice.json`.
 
 Limitations and things not verified:
-* Each run overwrites the rejection exports. After the two full runs, Stages 2-3 were re-run on 2026-11-20, so
-  `outputs/initial_rejection.json` and `outputs/initial_rejected_records.csv` carry reference
-  `initial-rejection-run-20261120T174800Z-bf10d1`, and `outputs/feature_readback_checks.json` carries that run_id. The same 3 affected rows
-  were produced each time; full runs 1 and 2 used `initial-rejection-run-20261120T161304Z-bb63cf` and
-  `initial-rejection-run-20261120T161446Z-03e856`.
+* Each run overwrites the rejection and readback exports. They now come from run 2 (reference
+  `initial-rejection-run-20261123T175819Z-e400cf`). Run 1 produced the same 3 affected rows under
+  `initial-rejection-run-20261123T175615Z-138110`.
 * In `initial_rejected_records.csv`, pandas writes `income` as a float (`100.0`) because the column contains a NULL. The Delta table keeps it as int.
 * Interactive runs only; no Jobs run IDs.
 * The checks cover this task's data contract only. They do not show that the data has no model leakage, and no labels are included.

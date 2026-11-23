@@ -1,0 +1,89 @@
+{
+  "run_id": "run-20261123T175819Z-e400cf",
+  "run_ts_utc": "2026-11-23T17:58:19Z",
+  "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243",
+  "inputs": {
+    "rejected": "training.to6_challenge3_inputs.returns_initial",
+    "accepted": "training.to6_challenge3_inputs.returns_corrected",
+    "upstream": "training.to6_challenge3_inputs.parsed_source"
+  },
+  "initial_batch_rejection": {
+    "rejection_ref": "initial-rejection-run-20261123T175819Z-e400cf",
+    "run_id": "run-20261123T175819Z-e400cf",
+    "checked_at_utc": "2026-11-23T17:58:19Z",
+    "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243",
+    "table": "training.to6_challenge3_inputs.returns_initial",
+    "decision": "REJECTED",
+    "rule_results": {
+      "completeness_null_required_rows": 1,
+      "uniqueness_duplicate_return_ids": 1,
+      "validity_negative_amount_rows": 0,
+      "validity_year_out_of_range_rows": 0,
+      "total_rows": 13,
+      "distinct_return_ids": 12
+    },
+    "affected_records_table": "training.to6_c3_915f8c75478a.initial_rejected_records",
+    "next_action": "Do not repair or use the initial batch; assess returns_corrected with the same rules."
+  },
+  "outputs": {
+    "training.to6_c3_915f8c75478a.return_features": 12,
+    "training.to6_c3_915f8c75478a.features_train": 4,
+    "training.to6_c3_915f8c75478a.features_validation": 4,
+    "training.to6_c3_915f8c75478a.features_test": 4
+  },
+  "ratio_definition": "deduction_to_income = deduction / income; NULL when income = 0",
+  "checks": {
+    "feature_readback": {
+      "run_id": "run-20261123T175819Z-e400cf",
+      "table": "training.to6_c3_915f8c75478a.return_features",
+      "columns": [
+        "return_id",
+        "tax_year",
+        "deduction_to_income"
+      ],
+      "rows": 12,
+      "nonzero_check": {
+        "return_id": "R04",
+        "source_table": "training.to6_challenge3_inputs.parsed_source",
+        "deduction": 59,
+        "income": 400,
+        "expected": 0.1475,
+        "saved": 0.1475
+      },
+      "zero_income_check": [
+        {
+          "return_id": "R03",
+          "tax_year": 2022,
+          "deduction_to_income": null
+        },
+        {
+          "return_id": "R09",
+          "tax_year": 2024,
+          "deduction_to_income": null
+        }
+      ]
+    },
+    "hand_calculated": {
+      "cases": 7,
+      "all_match": true,
+      "file": "outputs/hand_calculated_checks.csv"
+    },
+    "repeat_run_comparison": {
+      "run_a": "run-20261123T175615Z-138110",
+      "run_b": "run-20261123T175819Z-e400cf",
+      "rows_compared": 24,
+      "all_identical": true,
+      "files": [
+        "outputs/run_comparison.json",
+        "outputs/run_comparison.csv"
+      ]
+    }
+  },
+  "exports": [
+    "outputs/return_features.csv",
+    "outputs/features_train.csv",
+    "outputs/features_validation.csv",
+    "outputs/features_test.csv",
+    "outputs/initial_rejected_records.csv"
+  ]
+}

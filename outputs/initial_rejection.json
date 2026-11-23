@@ -1,7 +1,7 @@
 {
-  "rejection_ref": "initial-rejection-run-20261120T174800Z-bf10d1",
-  "run_id": "run-20261120T174800Z-bf10d1",
-  "checked_at_utc": "2026-11-20T17:48:00Z",
+  "rejection_ref": "initial-rejection-run-20261123T175819Z-e400cf",
+  "run_id": "run-20261123T175819Z-e400cf",
+  "checked_at_utc": "2026-11-23T17:58:19Z",
   "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243",
   "table": "training.to6_challenge3_inputs.returns_initial",
   "decision": "REJECTED",

@@ -1,19 +1,19 @@
 {
   "run_a": {
-    "run_id": "run-20261120T161304Z-bb63cf",
-    "run_ts_utc": "2026-11-20T16:13:04Z",
-    "finished_ts_utc": "2026-11-20T16:13:49Z",
+    "run_id": "run-20261123T175615Z-138110",
+    "run_ts_utc": "2026-11-23T17:56:15Z",
+    "finished_ts_utc": "2026-11-23T17:57:15Z",
     "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243"
   },
   "run_b": {
-    "run_id": "run-20261120T161446Z-03e856",
-    "run_ts_utc": "2026-11-20T16:14:46Z",
-    "finished_ts_utc": "2026-11-20T16:15:30Z",
+    "run_id": "run-20261123T175819Z-e400cf",
+    "run_ts_utc": "2026-11-23T17:58:19Z",
+    "finished_ts_utc": "2026-11-23T17:59:14Z",
     "notebook_url": "https://dbc-48a16403-f66f.cloud.databricks.com/editor/notebooks/127024866558243"
   },
   "snapshot_files": [
-    "outputs/run_snapshots/run-20261120T161304Z-bb63cf.json",
-    "outputs/run_snapshots/run-20261120T161446Z-03e856.json"
+    "outputs/run_snapshots/run-20261123T175615Z-138110.json",
+    "outputs/run_snapshots/run-20261123T175819Z-e400cf.json"
   ],
   "tables": {
     "training.to6_c3_915f8c75478a.return_features": {
@@ -25,8 +25,8 @@
       "identical_ids_and_values": true,
       "differences": [],
       "last_write_run_b": {
-        "version": 1,
-        "timestamp": "2026-11-20 16:15:03.654000",
+        "version": 4,
+        "timestamp": "2026-11-23 17:58:38.732000",
         "operation": "CREATE OR REPLACE TABLE AS SELECT",
         "mode": null
       }
@@ -40,8 +40,8 @@
       "identical_ids_and_values": true,
       "differences": [],
       "last_write_run_b": {
-        "version": 1,
-        "timestamp": "2026-11-20 16:15:20.041000",
+        "version": 3,
+        "timestamp": "2026-11-23 17:59:02.090000",
         "operation": "CREATE OR REPLACE TABLE AS SELECT",
         "mode": null
       }
@@ -55,8 +55,8 @@
       "identical_ids_and_values": true,
       "differences": [],
       "last_write_run_b": {
-        "version": 1,
-        "timestamp": "2026-11-20 16:15:21.748000",
+        "version": 3,
+        "timestamp": "2026-11-23 17:59:03.992000",
         "operation": "CREATE OR REPLACE TABLE AS SELECT",
         "mode": null
       }
@@ -70,8 +70,8 @@
       "identical_ids_and_values": true,
       "differences": [],
       "last_write_run_b": {
-        "version": 1,
-        "timestamp": "2026-11-20 16:15:23.420000",
+        "version": 3,
+        "timestamp": "2026-11-23 17:59:05.772000",
         "operation": "CREATE OR REPLACE TABLE AS SELECT",
         "mode": null
       }

@@ -241,6 +241,53 @@ display(saved.orderBy("return_id"))
 
 # COMMAND ----------
 
+# DBTITLE 1,Hand-calculated checks on saved feature values
+# Expected ratios worked out by hand from the source amounts (deduction / income), written here as literal figures.
+# The amounts are also asserted against the accepted batch, so a changed source would fail loudly instead of passing silently.
+#   R01: 20 / 100    = 0.2
+#   R04: 59 / 400    = 0.1475
+#   R06: 85 / 600    = 17/120 = 0.141667 (6 dp)
+#   R10: 137 / 1000  = 0.137
+#   R11: 150 / 1100  = 3/22   = 0.136364 (6 dp)
+#   R03: income 0    -> NULL ratio (zero income is valid, the return stays)
+#   R09: income 0    -> NULL ratio
+HAND_CASES = [
+    # return_id, tax_year, income, deduction, hand-calculated expected ratio
+    ("R01", 2022, 100, 20, 0.2),
+    ("R04", 2022, 400, 59, 0.1475),
+    ("R06", 2023, 600, 85, 0.141667),
+    ("R10", 2024, 1000, 137, 0.137),
+    ("R11", 2024, 1100, 150, 0.136364),
+    ("R03", 2022, 0, 46, None),
+    ("R09", 2024, 0, 124, None),
+]
+TOL = 5e-7  # hand figures are rounded to 6 decimal places
+
+src_rows = {r.return_id: r for r in spark.table(ACCEPTED_TABLE).collect()}
+saved_rows = {r.return_id: r for r in spark.table(FEATURES_TABLE).collect()}
+hand_results = []
+for rid, year, inc, ded, expected in HAND_CASES:
+    s, f = src_rows[rid], saved_rows[rid]
+    assert (s.tax_year, s.income, s.deduction) == (year, inc, ded), f"source amounts for {rid} differ from the hand calculation"
+    saved_val = f.deduction_to_income
+    ok = (saved_val is None) if expected is None else (saved_val is not None and abs(saved_val - expected) <= TOL)
+    hand_results.append({"return_id": rid, "tax_year": f.tax_year, "income": inc, "deduction": ded,
+                         "hand_expected": expected, "saved": saved_val, "tolerance": TOL, "match": ok})
+
+hand_df = spark.createDataFrame(hand_results)
+display(hand_df.select("return_id", "tax_year", "income", "deduction", "hand_expected", "saved", "match"))
+assert all(r["match"] for r in hand_results), [r for r in hand_results if not r["match"]]
+
+hand_check_evidence = {"run_id": RUN_ID, "table": FEATURES_TABLE, "source_table": ACCEPTED_TABLE,
+                       "rule": "deduction_to_income = deduction / income; NULL when income = 0",
+                       "cases": hand_results, "all_match": all(r["match"] for r in hand_results)}
+(repo_root / "outputs/hand_calculated_checks.json").write_text(json.dumps(hand_check_evidence, indent=2) + "\n", encoding="utf-8")
+hand_df.select("return_id", "tax_year", "income", "deduction", "hand_expected", "saved", "tolerance", "match") \
+       .toPandas().to_csv(repo_root / "outputs/hand_calculated_checks.csv", index=False)
+print("Hand-calculated checks:", len(hand_results), "cases, all match:", hand_check_evidence["all_match"])
+
+# COMMAND ----------
+
 # DBTITLE 1,Stage 4 notes
 # MAGIC %md
 # MAGIC ## 4. Make the handoff usable
@@ -299,7 +346,7 @@ print("Saved snapshot:", f"outputs/run_snapshots/{RUN_ID}.json")
 
 # COMMAND ----------
 
-# DBTITLE 1,Compare the two most recent successful runs
+# DBTITLE 1,Compare the two most recent successful runs, save results file
 # Compare IDs and values (not just counts) between the two most recent successful-run snapshots
 snap_files = sorted((repo_root / "outputs/run_snapshots").glob("*.json"),
                     key=lambda p: json.loads(p.read_text())["finished_ts_utc"])
@@ -332,3 +379,45 @@ else:
     print(json.dumps({t: {k: v[k] for k in ("rows_run_a", "rows_run_b", "identical_ids_and_values")} for t, v in per_table.items()}, indent=1))
     print("ALL IDENTICAL:", comparison["all_identical"])
     assert comparison["all_identical"], "Runs differ - investigate before handoff"
+
+    # Row-by-row side-by-side comparison of both runs (every table, every return ID and value)
+    import pandas as pd
+    cmp_rows = []
+    for t in a["tables"]:
+        va = {r[0]: r for r in a["tables"][t]["rows"]}
+        vb = {r[0]: r for r in b["tables"][t]["rows"]}
+        for rid in sorted(set(va) | set(vb)):
+            ra, rb = va.get(rid), vb.get(rid)
+            cmp_rows.append({
+                "table": t, "return_id": rid,
+                "tax_year_run_a": ra[1] if ra else None, "tax_year_run_b": rb[1] if rb else None,
+                "ratio_run_a": ra[2] if ra else None, "ratio_run_b": rb[2] if rb else None,
+                "in_both_runs": ra is not None and rb is not None, "identical": ra == rb,
+            })
+    cmp_pdf = pd.DataFrame(cmp_rows)
+    cmp_pdf.insert(0, "run_b", b["run_id"]); cmp_pdf.insert(0, "run_a", a["run_id"])
+    cmp_pdf.to_csv(repo_root / "outputs/run_comparison.csv", index=False)
+    assert len(cmp_pdf) == sum(v["rows_run_a"] for v in per_table.values()) and cmp_pdf["identical"].all()
+    print(f"run_comparison.csv: {len(cmp_pdf)} rows, all identical: {bool(cmp_pdf['identical'].all())}")
+
+    # Results file: one place summarizing every check and its outcome for this run
+    rejection = json.loads((repo_root / "outputs/initial_rejection.json").read_text())
+    results = {
+        "run_id": RUN_ID, "run_ts_utc": RUN_TS, "notebook_url": NOTEBOOK_URL,
+        "inputs": {"rejected": INITIAL_TABLE, "accepted": ACCEPTED_TABLE, "upstream": UPSTREAM_TABLE},
+        "initial_batch_rejection": rejection,
+        "outputs": {t: len(b["tables"][t]["rows"]) for t in b["tables"]},
+        "ratio_definition": "deduction_to_income = deduction / income; NULL when income = 0",
+        "checks": {
+            "feature_readback": json.loads((repo_root / "outputs/feature_readback_checks.json").read_text()),
+            "hand_calculated": {"cases": len(hand_check_evidence["cases"]), "all_match": hand_check_evidence["all_match"],
+                                "file": "outputs/hand_calculated_checks.csv"},
+            "repeat_run_comparison": {"run_a": a["run_id"], "run_b": b["run_id"], "rows_compared": len(cmp_pdf),
+                                      "all_identical": comparison["all_identical"],
+                                      "files": ["outputs/run_comparison.json", "outputs/run_comparison.csv"]},
+        },
+        "exports": ["outputs/return_features.csv", "outputs/features_train.csv", "outputs/features_validation.csv",
+                    "outputs/features_test.csv", "outputs/initial_rejected_records.csv"],
+    }
+    (repo_root / "outputs/results.json").write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+    print("Saved outputs/results.json")

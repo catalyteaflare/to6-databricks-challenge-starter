@@ -1,0 +1,79 @@
+{
+  "run_id": "run-20261123T175819Z-e400cf",
+  "table": "training.to6_c3_915f8c75478a.return_features",
+  "source_table": "training.to6_challenge3_inputs.returns_corrected",
+  "rule": "deduction_to_income = deduction / income; NULL when income = 0",
+  "cases": [
+    {
+      "return_id": "R01",
+      "tax_year": 2022,
+      "income": 100,
+      "deduction": 20,
+      "hand_expected": 0.2,
+      "saved": 0.2,
+      "tolerance": 5e-07,
+      "match": true
+    },
+    {
+      "return_id": "R04",
+      "tax_year": 2022,
+      "income": 400,
+      "deduction": 59,
+      "hand_expected": 0.1475,
+      "saved": 0.1475,
+      "tolerance": 5e-07,
+      "match": true
+    },
+    {
+      "return_id": "R06",
+      "tax_year": 2023,
+      "income": 600,
+      "deduction": 85,
+      "hand_expected": 0.141667,
+      "saved": 0.14166666666666666,
+      "tolerance": 5e-07,
+      "match": true
+    },
+    {
+      "return_id": "R10",
+      "tax_year": 2024,
+      "income": 1000,
+      "deduction": 137,
+      "hand_expected": 0.137,
+      "saved": 0.137,
+      "tolerance": 5e-07,
+      "match": true
+    },
+    {
+      "return_id": "R11",
+      "tax_year": 2024,
+      "income": 1100,
+      "deduction": 150,
+      "hand_expected": 0.136364,
+      "saved": 0.13636363636363635,
+      "tolerance": 5e-07,
+      "match": true
+    },
+    {
+      "return_id": "R03",
+      "tax_year": 2022,
+      "income": 0,
+      "deduction": 46,
+      "hand_expected": null,
+      "saved": null,
+      "tolerance": 5e-07,
+      "match": true
+    },
+    {
+      "return_id": "R09",
+      "tax_year": 2024,
+      "income": 0,
+      "deduction": 124,
+      "hand_expected": null,
+      "saved": null,
+      "tolerance": 5e-07,
+      "match": true
+    }
+  ],
+  "all_match": true
+}

@@ -1,4 +1,4 @@
 return_id,taxpayer_id,tax_year,income,deduction,rejection_reason,rejection_ref,source_table
-R01,F0,2022,100.0,20,uniqueness: return_id occurs 2 times,initial-rejection-run-20261120T174800Z-bf10d1,training.to6_challenge3_inputs.returns_initial
-R01,F0,2022,100.0,20,uniqueness: return_id occurs 2 times,initial-rejection-run-20261120T174800Z-bf10d1,training.to6_challenge3_inputs.returns_initial
-R02,F1,2022,,33,completeness: income is null,initial-rejection-run-20261120T174800Z-bf10d1,training.to6_challenge3_inputs.returns_initial
+R01,F0,2022,100.0,20,uniqueness: return_id occurs 2 times,initial-rejection-run-20261123T175819Z-e400cf,training.to6_challenge3_inputs.returns_initial
+R01,F0,2022,100.0,20,uniqueness: return_id occurs 2 times,initial-rejection-run-20261123T175819Z-e400cf,training.to6_challenge3_inputs.returns_initial
+R02,F1,2022,,33,completeness: income is null,initial-rejection-run-20261123T175819Z-e400cf,training.to6_challenge3_inputs.returns_initial
